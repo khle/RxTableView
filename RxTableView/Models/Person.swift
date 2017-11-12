@@ -9,11 +9,6 @@
 import Foundation
 import UIKit
 
-struct User {
-    let name: String
-    var image: String
-}
-
 struct Person : Decodable {
     let id: Int
     let first_name: String
@@ -27,4 +22,9 @@ struct People : Decodable {
     let total: Int
     let total_pages: Int
     let data: [Person]
+}
+
+struct RenderedPerson {
+    let name: String
+    var image: UIImage?
 }

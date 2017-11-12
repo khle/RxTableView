@@ -8,35 +8,30 @@
 
 import Foundation
 import RxSwift
+import UIKit
 
 final class PersonViewModel {
-    var observableUsers: Observable<[User]>?
+    var observableUsers: Observable<[RenderedPerson]>?
     
-    init(restClient _restClient:RESTClient) {
-        restClient = _restClient
-        
-        /*
-        let observables = restClient.getUsers();
-        self.observableUsers = observables
-            .map { people in
-                people.data.map { person in
-                    User(name: "\(person.first_name) \(person.last_name)", image: person.avatar)
-                }
-            }
-            .observeOn(MainScheduler.instance)
-            .share(replay:1)
-        */
+    init(restClient:RESTClient) {
         
         self.observableUsers = restClient.getUsers()
             .map {
-                $0.data.map {
-                    User(name: "\($0.first_name) \($0.last_name)", image: $0.avatar)
+                $0.data.flatMap {
+                    RenderedPerson(name: "\($0.first_name) \($0.last_name)", image: self.imageFromURL(imageUrl: $0.avatar))
                 }
             }
             .observeOn(MainScheduler.instance)
             .share(replay:1)
     }
     
-    // MARK: - Private
-    private let restClient: RESTClient!
+    private func imageFromURL(imageUrl url: String) -> UIImage? {
+        if let url = NSURL(string: url) {
+            if let data = NSData(contentsOf: url as URL) {
+                return UIImage(data: data as Data)!
+            }
+        }
+        
+        return nil
+    }
 }

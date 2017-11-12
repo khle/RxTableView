@@ -29,7 +29,8 @@ class ViewController: UIViewController {
             _, person, cell in
             if let currentCell = cell as? TableViewCell {
                 currentCell.label.text = person.name
-                currentCell.imgView.setImageFromURL(imageUrl: person.image)
+                currentCell.imgView.image = person.image
+                //currentCell.imgView.setImageFromURL(imageUrl: person.image)
             }
             }.disposed(by: disposeBag)
     }
