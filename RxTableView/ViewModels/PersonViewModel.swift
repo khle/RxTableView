@@ -25,6 +25,7 @@ final class PersonViewModel {
             .share(replay:1)
     }
     
+    // MARK: - Private
     private func imageFromURL(imageUrl url: String) -> UIImage? {
         if let url = NSURL(string: url) {
             if let data = NSData(contentsOf: url as URL) {
