@@ -10,6 +10,26 @@ import Foundation
 import RxSwift
 import UIKit
 
+final class StringKey : NSObject {
+    let string: String
+    init(string: String) {
+        self.string = string
+    }
+    override func isEqual(_ object: Any?) -> Bool {
+        guard let other = object as? StringKey else {
+            return false
+        }
+        return string == other.string
+    }
+    
+    override var hash: Int {
+        return string.hashValue
+    }
+}
+
+let imageCache = NSCache<StringKey, UIImage>()
+
+
 final class PersonViewModel {
     var observableUsers: Observable<[RenderedPerson]>?
     
@@ -26,10 +46,16 @@ final class PersonViewModel {
     }
     
     // MARK: - Private
-    private func imageFromURL(imageUrl url: String) -> UIImage? {
-        if let url = NSURL(string: url) {
+    private func imageFromURL(imageUrl urlString: String) -> UIImage? {
+        if let imageFromCache = imageCache.object(forKey: StringKey(string: urlString)) {
+            return imageFromCache
+        }
+        
+        if let url = NSURL(string: urlString) {
             if let data = NSData(contentsOf: url as URL) {
-                return UIImage(data: data as Data)!
+                let imageFromUrl = UIImage(data: data as Data)!
+                imageCache.setObject(imageFromUrl, forKey: StringKey(string: urlString))
+                return imageFromUrl
             }
         }
         
